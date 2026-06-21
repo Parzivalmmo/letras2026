@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Diccionario Online</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        /* Buscador */
+        .search-container {
+            margin-bottom: 25px;
+        }
+
+        #search-bar {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #search-bar:focus {
+            border-color: #3498db;
+        }
+
+        /* Índice de la A a la Z */
+        .alphabet-index {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .alphabet-index a {
+            text-decoration: none;
+            color: #3498db;
+            font-weight: bold;
+            padding: 6px 10px;
+            border-radius: 4px;
+            background: #eef2f7;
+            transition: all 0.2s;
+        }
+
+        .alphabet-index a:hover {
+            background: #3498db;
+            color: white;
+        }
+
+        /* Secciones de letras y términos */
+        .letter-group {
+            margin-bottom: 35px;
+        }
+
+        .letter-title {
+            font-size: 24px;
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+
+        .term-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .term-item:hover {
+            background-color: #f9fbfd;
+        }
+
+        .term-word {
+            font-weight: bold;
+            color: #e74c3c;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .term-definition {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* Mensaje de no resultados */
+        #no-results {
+            display: none;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Diccionario Digital</h1>
+
+    <!-- Buscador -->
+    <div class="search-container">
+        <input type="text" id="search-bar" placeholder="Buscar un término o palabra...">
+    </div>
+
+    <!-- Índice Alfabético (A-Z) -->
+    <div class="alphabet-index">
+        <a href="#A">A</a>
+        <a href="#B">B</a>
+        <a href="#C">C</a>
+        <!-- Puedes seguir agregando enlaces para el resto de letras si quieres -->
+    </div>
+
+    <!-- Contenedor del Diccionario -->
+    <div id="dictionary-list">
+
+        <!-- Grupo A -->
+        <div class="letter-group" id="A">
+            <div class="letter-title">A</div>
+            
+            <div class="term-item">
+                <div class="term-word">Algoritmo</div>
+                <div class="term-definition">Conjunto ordenado y finito de operaciones que permite hallar la solución de un problema.</div>
+            </div>
+
+            <div class="term-item">
+                <div class="term-word">API</div>
+                <div class="term-definition">Interfaz de programación de aplicaciones que permite que dos aplicaciones se comuniquen entre sí.</div>
+            </div>
+        </div>
+
+        <!-- Grupo B -->
+        <div class="letter-group" id="B">
+            <div class="letter-title">B</div>
+            
+            <div class="term-item">
+                <div class="term-word">Backup</div>
+                <div class="term-definition">Copia de seguridad que se realiza para prevenir la pérdida de datos.</div>
+            </div>
+
+            <div class="term-item">
+                <div class="term-word">Base de datos</div>
+                <div class="term-definition">Almacén de datos estructurados que están organizados de forma independiente de su utilización.</div>
+            </div>
+        </div>
+
+        <!-- Grupo C -->
+        <div class="letter-group" id="C">
+            <div class="letter-title">C</div>
+            
+            <div class="term-item">
+                <div class="term-word">CSS</div>
+                <div class="term-definition">Hojas de estilo en cascada, utilizadas para definir el diseño y presentación de documentos HTML.</div>
+            </div>
+
+            <div class="term-item">
+                <div class="term-word">Código abierto</div>
+                <div class="term-definition">Software cuyo código fuente está disponible públicamente para que cualquiera pueda verlo, modificarlo y distribuirlo.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Mensaje si no se encuentra nada -->
+    <div id="no-results">No se encontraron términos que coincidan con tu búsqueda.</div>
+</div>
+
+<script>
+    const searchBar = document.getElementById('search-bar');
+    const termItems = document.querySelectorAll('.term-item');
+    const letterGroups = document.querySelectorAll('.letter-group');
+    const noResults = document.getElementById('no-results');
+
+    searchBar.addEventListener('keyup', (e) => {
+        const searchString = e.target.value.toLowerCase().trim();
+        let anyVisible = false;
+
+        // Filtrar término por término
+        letterGroups.forEach(group => {
+            let groupHasVisibleTerms = false;
+            const itemsInGroup = group.querySelectorAll('.term-item');
+
+            itemsInGroup.forEach(item => {
+                const word = item.querySelector('.term-word').textContent.toLowerCase();
+                const definition = item.querySelector('.term-definition').textContent.toLowerCase();
+
+                // Si la palabra o la definición incluyen lo buscado
+                if (word.includes(searchString) || definition.includes(searchString)) {
+                    item.style.display = 'block';
+                    groupHasVisibleTerms = true;
+                    anyVisible = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Si la letra completa no tiene términos que coincidan, ocultamos la letra completa
+            if (groupHasVisibleTerms) {
+                group.style.display = 'block';
+            } else {
+                group.style.display = 'none';
+            }
+        });
+
+        // Mostrar u ocultar mensaje de "No resultados"
+        if (anyVisible) {
+            noResults.style.display = 'none';
+        } else {
+            noResults.style.display = 'block';
+        }
+    });
+</script>
+
+</body>
+</html>
