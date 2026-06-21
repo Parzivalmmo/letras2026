@@ -3,189 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador de Palabras</title>
+    <title>Buscador de Palabras Limpio</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
         }
 
         body {
-            background-color: #f0f4f8;
-            color: #333;
-            padding: 40px 20px;
+            background-color: #ffffff;
+            color: #111111;
+            padding: 60px 20px;
+            display: flex;
+            justify-content: center;
         }
 
-        .search-box {
-            max-width: 700px;
-            margin: 0 auto;
+        .wrapper {
+            width: 100%;
+            max-width: 600px;
         }
 
-        h1 {
-            text-align: center;
-            color: #1a365d;
-            margin-bottom: 30px;
-            font-size: 2.5rem;
-        }
-
-        /* Diseño de la barra de búsqueda */
-        .input-wrapper {
-            position: relative;
-            margin-bottom: 30px;
-        }
-
+        /* Buscador minimalista */
         #search-input {
             width: 100%;
-            padding: 18px 25px;
-            font-size: 18px;
-            border: 2px solid #cbd5e1;
-            border-radius: 50px;
+            padding: 12px 0;
+            font-size: 22px;
+            border: none;
+            border-bottom: 2px solid #e5e5e5;
             outline: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
+            transition: border-color 0.2s;
+            margin-bottom: 20px;
         }
 
         #search-input:focus {
-            border-color: #4299e1;
-            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.2);
+            border-bottom-color: #111111;
         }
 
-        /* Lista de resultados */
-        .results-list {
+        /* Lista de palabras limpias */
+        .words-list {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
         }
 
-        .word-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border-left: 5px solid #4299e1;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .word-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        .word-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #2b6cb0;
-            margin-bottom: 8px;
-        }
-
-        .word-definition {
-            color: #4a5568;
-            line-height: 1.6;
-            font-size: 16px;
-        }
-
-        /* Mensajes de estado */
-        #no-results {
-            display: none;
-            text-align: center;
-            color: #718096;
+        .word-item {
             font-size: 18px;
-            margin-top: 30px;
-            font-style: italic;
+            color: #222222;
+            padding: 4px 0;
+            animation: fadeIn 0.15s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
 
-<div class="search-box">
-    <h1>Buscador de Palabras</h1>
-
-    <div class="input-wrapper">
-        <input type="text" id="search-input" placeholder="Escribe la palabra que deseas buscar...">
-    </div>
-
-    <div class="results-list" id="results-container"></div>
-
-    <div id="no-results">No se encontraron palabras que coincidan con tu búsqueda.</div>
+<div class="wrapper">
+    <input type="text" id="search-input" placeholder="Escribe para buscar palabras..." autocomplete="off">
+    <div class="words-list" id="results-container"></div>
 </div>
 
 <script>
-    // Tu lista completa de palabras de la A a la Z
-    const diccionario = [
-        { palabra: "Algoritmo", def: "Secuencia de pasos lógicos para resolver un problema." },
-        { palabra: "Buscar", def: "Hacer lo necesario para encontrar a una persona, cosa o información." },
-        { palabra: "Concepto", def: "Idea que concibe o forma el entendimiento." },
-        { palabra: "Definición", def: "Proposición que expone con claridad los caracteres genéricos de una cosa." },
-        { palabra: "Estructura", def: "Disposición o modo de estar relacionadas las distintas partes de un conjunto." },
-        { palabra: "Filtrar", def: "Separar componentes o seleccionar elementos específicos de una lista." },
-        { palabra: "Glosario", def: "Catálogo de palabras de una misma disciplina definidos o comentados." },
-        { palabra: "Hipertexto", def: "Texto que contiene enlaces a otros textos o páginas web." },
-        { palabra: "Información", def: "Conjunto de datos ya procesados y organizados para comunicar un mensaje." },
-        { palabra: "JavaScript", def: "Lenguaje de programación utilizado para crear interactividad en la web." },
-        { palabra: "Kilovatio", def: "Unidad de potencia eléctrica equivalente a mil vatios." },
-        { palabra: "Lenguaje", def: "Sistema de signos que utiliza una comunidad para comunicarse." },
-        { palabra: "Matriz", def: "Conjunto de elementos ordenados en filas y columnas." },
-        { palabra: "Navegador", def: "Programa que permite el acceso a la web, interpretando el código HTML." },
-        { palabra: "Optimizar", def: "Buscar la mejor manera de realizar una actividad o proceso." },
-        { palabra: "Palabra", def: "Unidad de la lengua que tiene significado y que se escribe separada de otras." },
-        { palabra: "Query", def: "Consulta que se realiza a una base de datos para extraer información." },
-        { palabra: "Resultado", def: "Efecto o consecuencia de un hecho, operación o deliberación." },
-        { palabra: "Servidor", def: "Computadora que provee servicios y datos a otras computadoras llamadas clientes." },
-        { palabra: "Tecnología", def: "Conjunto de teorías y de técnicas que permiten el aprovechamiento práctico del conocimiento científico." },
-        { palabra: "Usuario", def: "Persona que utiliza habitualmente un servicio, dispositivo o sistema." },
-        { palabra: "Variable", def: "Elemento cuyo valor puede cambiar o ser modificado dentro de un proceso." },
-        { palabra: "Web", def: "Red informática mundial o sistema de páginas interconectadas por enlaces." },
-        { palabra: "Xilografía", def: "Técnica de grabado e impresión con una plancha de madera." },
-        { palabra: "Yacimiento", def: "Sitio donde se halla naturalmente una roca, un mineral o restos arqueológicos." },
-        { palabra: "Zofra", def: "Alfombra o tapiz de origen árabe que se usa para cubrir el suelo." }
+    // Tu lista de miles de palabras básicas. Solo texto plano.
+    const milesDePalabras = [
+        "Abanico", "Abdomen", "Abismo", "Abogado", "Abrigo", "Absorber", "Abuelo", "Acción", "Aceite", "Acedo",
+        "Bailar", "Balanza", "Balcón", "Ballena", "Banco", "Banda", "Baño", "Barco", "Barril", "Basura",
+        "Caballo", "Cabeza", "Cable", "Cadena", "Café", "Caja", "Calamar", "Calor", "Cama", "Cámara",
+        "Dado", "Daga", "Danza", "Dato", "Delfín", "Delgado", "Diente", "Dinero", "Dinosaurio", "Disco",
+        "Eclipse", "Eco", "Efecto", "Eje", "Elefante", "Elegir", "Embudo", "Enano", "Energía", "Enero",
+        "Fábrica", "Fácil", "Factor", "Faja", "Falda", "Fama", "Familia", "Faro", "Fase", "Febrero",
+        "Galaxia", "Galleta", "Gallo", "Gancho", "Ganso", "Garaje", "Gato", "Gema", "Geranio", "Gigante",
+        "Habitar", "Hacha", "Halcón", "Hamaca", "Harina", "Helado", "Hélice", "Hielo", "Hierro", "Hijo",
+        "Iglú", "Imán", "Impacto", "Impresora", "Incendio", "Indio", "Infante", "Insecto", "Isla", "Izquierda",
+        "Jabón", "Jacinto", "Jaguar", "Jaula", "Jazmín", "Jefe", "Jinete", "Jirafa", "Joya", "Juguete",
+        "Kilo", "Kilogramo", "Kilómetro", "Kiosco", "Kiwi", "Koala", "Kriptón", "Kurdo",
+        "Labio", "Ladrillo", "Lagarto", "Lámpara", "Lana", "Lápiz", "Lata", "León", "Letra", "Libro",
+        "Madera", "Madre", "Imán", "Maleta", "Mano", "Manzana", "Mapa", "Mariposa", "Martillo", "Mesa",
+        "Naipe", "Naranja", "Nariz", "Naturaleza", "Nave", "Neblina", "Nectar", "Nido", "Nieve", "Noche",
+        "Ñandú", "Ñame", "Ñandutí", "Ñato", "Ñoqui", "Ñu",
+        "Oasis", "Objeto", "Océano", "Ocho", "Oeste", "Oído", "Ojo", "Olivo", "Olla", "Oro",
+        "Padre", "Página", "Pájaro", "Pala", "Palabra", "Palma", "Pantera", "Papel", "Pared", "Patín",
+        "Querella", "Queso", "Química", "Quimera", "Quince", "Quinta", "Quiste",
+        "Radar", "Radio", "Raíz", "Rama", "Rana", "Ratón", "Rayo", "Receta", "Reloj", "Río",
+        "Sábado", "Sábana", "Saco", "Sal", "Salmón", "Sapo", "Satélite", "Sello", "Silbato", "Sol",
+        "Tabaco", "Tabla", "Taco", "Taladro", "Tambor", "Tanque", "Tapiz", "Tarjeta", "Taza", "Teatro",
+        "Universo", "Uno", "Uña", "Urna", "Urraca", "Usado", "Usuario", "Útil", "Utopía",
+        "Vaca", "Vacuna", "Valle", "Vapor", "Vaso", "Vela", "Velocidad", "Ventana", "Verde", "Viaje",
+        "Web", "Wifi", "Windsurf", "Whisky",
+        "Xenón", "Xilófono", "Xilografía",
+        "Yate", "Yegua", "Yema", "Yeti", "Yodo", "Yogur", "Yunque",
+        "Zafiro", "Zanahoria", "Zapato", "Zarza", "Zorro", "Zueco", "Zumo"
+        // Añade aquí todas las palabras entre comillas separadas por comas que quieras
     ];
 
     const searchInput = document.getElementById('search-input');
     const resultsContainer = document.getElementById('results-container');
-    const noResults = document.getElementById('no-results');
 
-    // Ordenar automáticamente las palabras alfabéticamente
-    diccionario.sort((a, b) => a.palabra.localeCompare(b.palabra, 'es', { sensitivity: 'base' }));
+    // Ordenar alfabéticamente
+    milesDePalabras.sort((a, b) => a.localeCompare(b.palabra, 'es', { sensitivity: 'base' }));
 
-    // Función para mostrar palabras en pantalla
-    function mostrarPalabras(lista) {
-        resultsContainer.innerHTML = "";
-        
-        if (lista.length === 0) {
-            noResults.style.display = 'block';
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+
+        // Si está vacío el buscador, la pantalla queda vacía por completo
+        if (query === "") {
+            resultsContainer.innerHTML = "";
             return;
         }
 
-        noResults.style.display = 'none';
-
-        lista.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'word-card';
-            card.innerHTML = `
-                <div class="word-title">${item.palabra}</div>
-                <div class="word-definition">${item.def}</div>
-            `;
-            resultsContainer.appendChild(card);
-        });
-    }
-
-    // Mostrar todas las palabras al cargar la página por primera vez
-    mostrarPalabras(diccionario);
-
-    // Escuchar lo que escribe el usuario para filtrar en tiempo real
-    searchInput.addEventListener('input', (e) => {
-        const busqueda = e.target.value.toLowerCase().trim();
-
-        // Filtra si la palabra o la definición contienen lo que el usuario escribió
-        const filtradas = diccionario.filter(item => 
-            item.palabra.toLowerCase().includes(busqueda) || 
-            item.def.toLowerCase().includes(busqueda)
+        // Filtrar palabras que contengan el texto ingresado
+        const filtradas = milesDePalabras.filter(palabra => 
+            palabra.toLowerCase().includes(query)
         );
 
-        mostrarPalabras(filtradas);
+        // Renderizar la lista limpia
+        renderLista(filtradas);
     });
+
+    function renderLista(lista) {
+        resultsContainer.innerHTML = "";
+
+        lista.forEach(palabra => {
+            const item = document.createElement('div');
+            item.className = 'word-item';
+            item.textContent = palabra; // Solo inyecta el texto limpio
+            resultsContainer.appendChild(item);
+        });
+    }
 </script>
 
 </body>
