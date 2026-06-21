@@ -3,279 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diccionario Completo A-Z</title>
+    <title>Buscador de Palabras</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
 
         body {
-            background-color: #f4f7f6;
+            background-color: #f0f4f8;
             color: #333;
-            padding: 20px;
+            padding: 40px 20px;
         }
 
-        .container {
-            max-width: 900px;
+        .search-box {
+            max-width: 700px;
             margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
         h1 {
             text-align: center;
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-
-        /* Buscador */
-        .search-container {
-            margin-bottom: 25px;
-            position: relative;
-        }
-
-        #search-bar {
-            width: 100%;
-            padding: 15px 20px;
-            font-size: 16px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        #search-bar:focus {
-            border-color: #3498db;
-        }
-
-        /* Índice de la A a la Z */
-        .alphabet-index {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 6px;
+            color: #1a365d;
             margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
+            font-size: 2.5rem;
         }
 
-        .alphabet-index a {
-            text-decoration: none;
-            color: #3498db;
+        /* Diseño de la barra de búsqueda */
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        #search-input {
+            width: 100%;
+            padding: 18px 25px;
+            font-size: 18px;
+            border: 2px solid #cbd5e1;
+            border-radius: 50px;
+            outline: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        #search-input:focus {
+            border-color: #4299e1;
+            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.2);
+        }
+
+        /* Lista de resultados */
+        .results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .word-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-left: 5px solid #4299e1;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .word-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .word-title {
+            font-size: 20px;
             font-weight: bold;
-            padding: 6px 10px;
-            border-radius: 4px;
-            background: #eef2f7;
-            transition: all 0.2s;
-            font-size: 14px;
+            color: #2b6cb0;
+            margin-bottom: 8px;
         }
 
-        .alphabet-index a:hover {
-            background: #3498db;
-            color: white;
-        }
-
-        /* Estilos de las secciones generadas */
-        .letter-group {
-            margin-bottom: 35px;
-        }
-
-        .letter-title {
-            font-size: 26px;
-            color: #2c3e50;
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 5px;
-            margin-bottom: 15px;
-        }
-
-        .term-item {
-            margin-bottom: 15px;
-            padding: 15px;
-            border-radius: 6px;
-            background: #fff;
-            border-left: 4px solid #e74c3c;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            transition: transform 0.2s;
-        }
-
-        .term-item:hover {
-            transform: translateX(5px);
-            background-color: #fbfcfe;
-        }
-
-        .term-word {
-            font-weight: bold;
-            color: #e74c3c;
-            font-size: 19px;
-            margin-bottom: 5px;
-        }
-
-        .term-definition {
-            color: #555;
+        .word-definition {
+            color: #4a5568;
             line-height: 1.6;
+            font-size: 16px;
         }
 
+        /* Mensajes de estado */
         #no-results {
             display: none;
             text-align: center;
-            color: #7f8c8d;
+            color: #718096;
             font-size: 18px;
-            margin-top: 40px;
+            margin-top: 30px;
             font-style: italic;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Diccionario Digital A-Z</h1>
+<div class="search-box">
+    <h1>Buscador de Palabras</h1>
 
-    <div class="search-container">
-        <input type="text" id="search-bar" placeholder="Escribe para buscar una palabra o concepto...">
+    <div class="input-wrapper">
+        <input type="text" id="search-input" placeholder="Escribe la palabra que deseas buscar...">
     </div>
 
-    <div class="alphabet-index" id="alphabet-menu"></div>
+    <div class="results-list" id="results-container"></div>
 
-    <div id="dictionary-container"></div>
-
-    <div id="no-results">No se encontraron términos que coincidan con tu búsqueda.</div>
+    <div id="no-results">No se encontraron palabras que coincidan con tu búsqueda.</div>
 </div>
 
 <script>
-    // ==========================================
-    // TU BASE DE DATOS DE PALABRAS
-    // ==========================================
-    // Aquí puedes añadir, quitar o cambiar todas las palabras que quieras. 
-    // El sistema se encarga de ordenarlas y agruparlas automáticamente de la A a la Z.
-    const palabras = [
-        { termino: "Algoritmo", definicion: "Conjunto de instrucciones ordenadas para resolver un problema." },
-        { termino: "API", definicion: "Application Programming Interface. Permite a dos softwares comunicarse entre sí." },
-        { termino: "Backup", definicion: "Copia de seguridad de tus datos o archivos importantes." },
-        { termino: "Base de Datos", definicion: "Sistema organizado para almacenar y gestionar grandes volúmenes de información." },
-        { termino: "CSS", definicion: "Hojas de estilo en cascada. Se usa para dar diseño, color y vida a una web." },
-        { termino: "Código Abierto", definicion: "Software cuyo código es público para que cualquiera lo mejore o use." },
-        { termino: "DNS", definicion: "Sistema de nombres de dominio. Traduce nombres web (como google.com) a direcciones IP." },
-        { termino: "Frontend", definicion: "La parte de una página web con la que el usuario interactúa directamente." },
-        { termino: "Git", definicion: "Sistema de control de versiones para rastrear cambios en el código fuente." },
-        { termino: "HTML", definicion: "Lenguaje de marcado utilizado para crear la estructura de las páginas web." },
-        { termino: "Internet", definicion: "Red global de computadoras interconectadas que comparten información." },
-        { termino: "JavaScript", definicion: "Lenguaje de programación que añade interactividad y dinamismo a las páginas web." },
-        { termino: "Kernel", definicion: "El núcleo o parte central de un sistema operativo." },
-        { termino: "Loop", definicion: "Bucle o estructura de control que repite un bloque de código varias veces." },
-        { termino: "Metadatos", definicion: "Datos estructurados que describen o dan información sobre otros datos." },
-        { termino: "Nube", definicion: "Red de servidores remotos en internet para almacenar y procesar datos." },
-        { termino: "Open Source", definicion: "Término en inglés para referirse al software de código abierto." },
-        { termino: "Pixel", definicion: "La menor unidad homogénea en color que forma parte de una imagen digital." },
-        { termino: "Query", definicion: "Una consulta o petición de información a una base de datos." },
-        { termino: "Responsive Design", definicion: "Diseño web adaptativo que se ve bien en celulares, tablets y computadoras." },
-        { termino: "Servidor", definicion: "Computadora potente que almacena archivos y 'sirve' páginas web a los usuarios." },
-        { termino: "Token", definicion: "Elemento de seguridad digital que sirve para autenticar a un usuario o proceso." },
-        { termino: "URL", definicion: "La dirección web única que utilizas para acceder a una página de internet." },
-        { termino: "Variables", definicion: "Espacios de memoria reservados para almacenar datos que pueden cambiar." },
-        { termino: "Webmaster", definicion: "Persona encargada de gestionar, mantener y diseñar un sitio web." },
-        { termino: "XML", definicion: "Lenguaje de marcado diseñado para almacenar y transportar datos de forma legible." },
-        { termino: "YottaByte", definicion: "Unidad de almacenamiento de información equivalente a 10 a la 24 bytes." },
-        { termino: "Zip", definicion: "Formato de compresión de archivos muy utilizado para reducir su tamaño." }
+    // Tu lista completa de palabras de la A a la Z
+    const diccionario = [
+        { palabra: "Algoritmo", def: "Secuencia de pasos lógicos para resolver un problema." },
+        { palabra: "Buscar", def: "Hacer lo necesario para encontrar a una persona, cosa o información." },
+        { palabra: "Concepto", def: "Idea que concibe o forma el entendimiento." },
+        { palabra: "Definición", def: "Proposición que expone con claridad los caracteres genéricos de una cosa." },
+        { palabra: "Estructura", def: "Disposición o modo de estar relacionadas las distintas partes de un conjunto." },
+        { palabra: "Filtrar", def: "Separar componentes o seleccionar elementos específicos de una lista." },
+        { palabra: "Glosario", def: "Catálogo de palabras de una misma disciplina definidos o comentados." },
+        { palabra: "Hipertexto", def: "Texto que contiene enlaces a otros textos o páginas web." },
+        { palabra: "Información", def: "Conjunto de datos ya procesados y organizados para comunicar un mensaje." },
+        { palabra: "JavaScript", def: "Lenguaje de programación utilizado para crear interactividad en la web." },
+        { palabra: "Kilovatio", def: "Unidad de potencia eléctrica equivalente a mil vatios." },
+        { palabra: "Lenguaje", def: "Sistema de signos que utiliza una comunidad para comunicarse." },
+        { palabra: "Matriz", def: "Conjunto de elementos ordenados en filas y columnas." },
+        { palabra: "Navegador", def: "Programa que permite el acceso a la web, interpretando el código HTML." },
+        { palabra: "Optimizar", def: "Buscar la mejor manera de realizar una actividad o proceso." },
+        { palabra: "Palabra", def: "Unidad de la lengua que tiene significado y que se escribe separada de otras." },
+        { palabra: "Query", def: "Consulta que se realiza a una base de datos para extraer información." },
+        { palabra: "Resultado", def: "Efecto o consecuencia de un hecho, operación o deliberación." },
+        { palabra: "Servidor", def: "Computadora que provee servicios y datos a otras computadoras llamadas clientes." },
+        { palabra: "Tecnología", def: "Conjunto de teorías y de técnicas que permiten el aprovechamiento práctico del conocimiento científico." },
+        { palabra: "Usuario", def: "Persona que utiliza habitualmente un servicio, dispositivo o sistema." },
+        { palabra: "Variable", def: "Elemento cuyo valor puede cambiar o ser modificado dentro de un proceso." },
+        { palabra: "Web", def: "Red informática mundial o sistema de páginas interconectadas por enlaces." },
+        { palabra: "Xilografía", def: "Técnica de grabado e impresión con una plancha de madera." },
+        { palabra: "Yacimiento", def: "Sitio donde se halla naturalmente una roca, un mineral o restos arqueológicos." },
+        { palabra: "Zofra", def: "Alfombra o tapiz de origen árabe que se usa para cubrir el suelo." }
     ];
 
-    // ==========================================
-    // LÓGICA DEL DICCIONARIO
-    // ==========================================
-    const alphabetMenu = document.getElementById('alphabet-menu');
-    const dictionaryContainer = document.getElementById('dictionary-container');
-    const searchBar = document.getElementById('search-bar');
+    const searchInput = document.getElementById('search-input');
+    const resultsContainer = document.getElementById('results-container');
     const noResults = document.getElementById('no-results');
 
-    const abecedario = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split("");
+    // Ordenar automáticamente las palabras alfabéticamente
+    diccionario.sort((a, b) => a.palabra.localeCompare(b.palabra, 'es', { sensitivity: 'base' }));
 
-    // 1. Generar los botones del índice A-Z de forma automática
-    abecedario.forEach(letra => {
-        const link = document.createElement('a');
-        link.href = `#letra-${letra}`;
-        link.textContent = letra;
-        alphabetMenu.appendChild(link);
-    });
+    // Función para mostrar palabras en pantalla
+    function mostrarPalabras(lista) {
+        resultsContainer.innerHTML = "";
+        
+        if (lista.length === 0) {
+            noResults.style.display = 'block';
+            return;
+        }
 
-    // 2. Ordenar alfabéticamente la base de datos de palabras
-    palabras.sort((a, b) => a.termino.localeCompare(b.termino, 'es', { sensitivity: 'base' }));
+        noResults.style.display = 'none';
 
-    // 3. Renderizar (dibujar) las palabras agrupadas por su letra inicial
-    function renderDiccionario() {
-        dictionaryContainer.innerHTML = "";
-
-        abecedario.forEach(letra => {
-            // Filtrar las palabras que empiezan con esta letra
-            const palabrasDeLaLetra = palabras.filter(p => p.termino.trim().toUpperCase().startsWith(letra));
-
-            if (palabrasDeLaLetra.length > 0) {
-                // Crear el grupo contenedor de la letra
-                const grupo = document.createElement('div');
-                grupo.className = 'letter-group';
-                grupo.id = `letra-${letra}`;
-
-                // Título de la letra (A, B, C...)
-                const titulo = document.createElement('div');
-                titulo.className = 'letter-title';
-                titulo.textContent = letra;
-                grupo.appendChild(titulo);
-
-                // Insertar cada palabra de esa letra
-                palabrasDeLaLetra.forEach(p => {
-                    const item = document.createElement('div');
-                    item.className = 'term-item';
-                    item.innerHTML = `
-                        <div class="term-word">${p.termino}</div>
-                        <div class="term-definition">${p.definicion}</div>
-                    `;
-                    grupo.appendChild(item);
-                });
-
-                dictionaryContainer.appendChild(grupo);
-            }
+        lista.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'word-card';
+            card.innerHTML = `
+                <div class="word-title">${item.palabra}</div>
+                <div class="word-definition">${item.def}</div>
+            `;
+            resultsContainer.appendChild(card);
         });
     }
 
-    renderDiccionario();
+    // Mostrar todas las palabras al cargar la página por primera vez
+    mostrarPalabras(diccionario);
 
-    // 4. Lógica del Buscador Ultra Rápido
-    searchBar.addEventListener('input', (e) => {
-        const textoBusqueda = e.target.value.toLowerCase().trim();
-        const gruposHtml = document.querySelectorAll('.letter-group');
-        let banderaEncontrado = false;
+    // Escuchar lo que escribe el usuario para filtrar en tiempo real
+    searchInput.addEventListener('input', (e) => {
+        const busqueda = e.target.value.toLowerCase().trim();
 
-        gruposHtml.forEach(grupo => {
-            let palabrasVisiblesEnGrupo = 0;
-            const items = grupo.querySelectorAll('.term-item');
+        // Filtra si la palabra o la definición contienen lo que el usuario escribió
+        const filtradas = diccionario.filter(item => 
+            item.palabra.toLowerCase().includes(busqueda) || 
+            item.def.toLowerCase().includes(busqueda)
+        );
 
-            items.forEach(item => {
-                const palabra = item.querySelector('.term-word').textContent.toLowerCase();
-                const definicion = item.querySelector('.term-definition').textContent.toLowerCase();
-
-                // Busca coincidencias tanto en el título como en el contenido
-                if (palabra.includes(textoBusqueda) || definicion.includes(textoBusqueda)) {
-                    item.style.display = 'block';
-                    palabrasVisiblesEnGrupo++;
-                    banderaEncontrado = true;
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-
-            // Si la letra no se quedó con palabras que coincidan, ocultamos la letra completa
-            if (palabrasVisiblesEnGrupo > 0) {
-                grupo.style.display = 'block';
-            } else {
-                grupo.style.display = 'none';
-            }
-        });
-
-        // Controlar el mensaje de "No se encontraron resultados"
-        noResults.style.display = banderaEncontrado ? 'none' : 'block';
+        mostrarPalabras(filtradas);
     });
 </script>
 
